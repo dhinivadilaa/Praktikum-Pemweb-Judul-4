@@ -1,5 +1,6 @@
 <?php
 include "session.php";
+require_login();
 
 $id = $_GET["id"];
 
@@ -11,3 +12,4 @@ foreach ($_SESSION['contacts'] as $i => $c) {
 }
 
 header("Location: index.php");
+?>

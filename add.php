@@ -1,5 +1,6 @@
 <?php
 include "session.php";
+require_login();
 
 $error = "";
 
@@ -16,7 +17,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (!preg_match("/^[0-9]+$/", $phone)) {
         $error = "Nomor telepon hanya boleh angka!";
     } else {
-        $newId = end($_SESSION['contacts'])['id'] + 1;
+  
+        $maxId = 0;
+        foreach ($_SESSION['contacts'] as $c) {
+            if ($c['id'] > $maxId) {
+                $maxId = $c['id'];
+            }
+        }
+        $newId = $maxId + 1;
 
         $_SESSION['contacts'][] = [
             "id" => $newId,
@@ -31,18 +39,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <?php include "layout/header.php"; ?>
 
-<h2 class="text-xl font-semibold mb-4">Tambah Kontak</h2>
+<h2 class="text-2xl font-semibold mb-6 text-gray-700">Tambah Kontak Baru</h2>
 
 <?php if ($error): ?>
-<p class="text-red-600"><?= $error ?></p>
+<p class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+    <?= $error ?>
+</p>
 <?php endif; ?>
 
-<form method="POST" class="space-y-3">
-    <input type="text" name="name" placeholder="Nama" class="w-full border p-2" required>
-    <input type="text" name="phone" placeholder="Telepon" class="w-full border p-2" required>
-    <input type="email" name="email" placeholder="Email" class="w-full border p-2" required>
+<form method="POST" class="space-y-4 bg-gray-50 p-6 rounded-lg shadow-inner">
+    <div>
+        <label for="name" class="block text-sm font-medium text-gray-700">Nama</label>
+        <input type="text" id="name" name="name" placeholder="Nama Lengkap" class="mt-1 w-full border border-gray-300 p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm" required>
+    </div>
+    <div>
+        <label for="phone" class="block text-sm font-medium text-gray-700">Telepon</label>
+        <input type="text" id="phone" name="phone" placeholder="Nomor Telepon (Hanya Angka)" class="mt-1 w-full border border-gray-300 p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm" required>
+    </div>
+    <div>
+        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" id="email" name="email" placeholder="Alamat Email" class="mt-1 w-full border border-gray-300 p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm" required>
+    </div>
 
-    <button class="bg-green-600 text-white px-4 py-2 rounded">Simpan</button>
+    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-150 ease-in-out shadow-md">Simpan Kontak</button>
+    <a href="index.php" class="ml-4 text-gray-600 hover:text-gray-800 font-medium">Batal</a>
 </form>
 
 <?php include "layout/footer.php"; ?>
